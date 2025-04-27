@@ -42,7 +42,7 @@ public class Quiz : MonoBehaviour
 
             //запрос на получение 5 случайных вопросов 
             using var command = connection.CreateCommand();
-            command.CommandText = "SELECT question, answer1, answer2, answer3, answer4, correct_answer" +
+            command.CommandText = "SELECT question, answer1, answer2, answer3, answer4" +
                 " FROM quiz ORDER BY RAND() LIMIT 5;";
             MySqlDataReader reader = await command.ExecuteReaderAsync();
             questionsTable.Load(reader);
@@ -64,11 +64,16 @@ public class Quiz : MonoBehaviour
             {
                 DataRow row = questionsTable.Rows[questionCounter];
                 questionText.text = (string)row[0];
-                answerButton1.GetComponentInChildren<TMP_Text>().text = (string)row[1];
-                answerButton2.GetComponentInChildren<TMP_Text>().text = (string)row[2];
-                answerButton3.GetComponentInChildren<TMP_Text>().text = (string)row[3];
-                answerButton4.GetComponentInChildren<TMP_Text>().text = (string)row[4];
-                correctAnswer = (int)row[5];
+
+                System.Random random = new System.Random();
+                int randomNumber = random.Next(4);
+                correctAnswer = randomNumber + 1;
+
+                answerButton1.GetComponentInChildren<TMP_Text>().text = (string)row[randomNumber + 1];
+                answerButton2.GetComponentInChildren<TMP_Text>().text = (string)row[(1 + randomNumber) % 4 + 1];
+                answerButton3.GetComponentInChildren<TMP_Text>().text = (string)row[(2 + randomNumber) % 4 + 1];
+                answerButton4.GetComponentInChildren<TMP_Text>().text = (string)row[(3 + randomNumber) % 4 + 1];
+
                 questionCounter++;
                 questionNumber.text = questionCounter.ToString();
             }
