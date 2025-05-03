@@ -91,6 +91,14 @@ public class Quiz : MonoBehaviour
     //проверяет правильность выбранного варианта ответа
     public async void CheckAnswer(Button button, int buttonNumber)
     {
+        // Отключение анимации кнопки
+        Animator animator = button.GetComponent<Animator>();
+        if (animator != null)
+        {
+            animator.enabled = false; 
+        }
+
+        // Смена цвета
         Color defaultColor = button.image.color;
         if (buttonNumber == correctAnswer)
         {
@@ -101,8 +109,18 @@ public class Quiz : MonoBehaviour
         {
             button.image.color = Color.red;
         }
+
         await Task.Delay(2000);
         button.image.color = defaultColor;
+
+        // Включение анимации кнопки
+        if (animator != null)
+        {
+            animator.enabled = true; 
+            animator.Rebind();
+            animator.Update(0f); 
+        }
+
         DisplayQuestion();
     }
 

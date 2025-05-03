@@ -7,6 +7,7 @@ using MySqlConnector;
 using System;
 using TMPro;
 using UnityEngine.SceneManagement;
+using static UnityEngine.Rendering.DebugUI.Table;
 
 public class Questions : MonoBehaviour
 {
@@ -85,6 +86,12 @@ public class Questions : MonoBehaviour
     void OnButtonClick(DataRow row)
     {
         FindAnyObjectByType<DataHolder>().dataRowQuestion = row;
+        SceneManager.LoadScene("FormQuestion");
+    }
+
+    public void ButtonNewQuestion()
+    {
+        FindAnyObjectByType<DataHolder>().dataRowQuestion = null;
         SceneManager.LoadScene("FormQuestion");
     }
 }
