@@ -112,4 +112,12 @@ public class Categories : MonoBehaviour
         PlayerPrefs.Save();
         SceneManager.LoadScene("Questions");
     }
+
+    public void ButtonNewCategory()
+    {
+        PlayerPrefs.SetString("Category", "AddNewCategory");
+        PlayerPrefs.Save();
+        FindAnyObjectByType<DataHolder>().dataRowQuestion = null;
+        SceneManager.LoadScene("FormQuestion");
+    }
 }

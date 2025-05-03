@@ -16,17 +16,19 @@ public class FormQuestion : MonoBehaviour
     public TMP_InputField answer2;
     public TMP_InputField answer3;
     public TMP_InputField answer4;
-    public TMP_Dropdown category;
-    public TMP_Dropdown level;
+    public TMP_Dropdown dropdownCategory;
+    public TMP_Dropdown dropdownLevel;
+    public Button buttonExit;
     public Button buttonSave;
-    public Button buttonDelete;
+    public Button buttonDelete; 
+    public TMP_InputField inputCategory;
 
     void Start()
     {
-        category.AddOptions(FindAnyObjectByType<DataHolder>().listCategories);
+        dropdownCategory.AddOptions(FindAnyObjectByType<DataHolder>().listCategories);
 
         List<string> levelOptions = new List<string> { "Легко", "Средне", "Тяжело" };
-        level.AddOptions(levelOptions);
+        dropdownLevel.AddOptions(levelOptions);
 
         row = FindAnyObjectByType<DataHolder>().dataRowQuestion;
 
@@ -38,15 +40,30 @@ public class FormQuestion : MonoBehaviour
             answer3.text = row["answer3"].ToString();
             answer4.text = row["answer4"].ToString();
             
-            category.value = category.options.FindIndex(option => option.text == row["category"].ToString());
-            level.value = Convert.ToInt32(row["level"]) - 1;
+            dropdownCategory.value = dropdownCategory.options.FindIndex(option => option.text == row["category"].ToString());
+            dropdownLevel.value = Convert.ToInt32(row["level"]) - 1;
 
             buttonDelete.gameObject.SetActive(true);
             buttonSave.onClick.AddListener(() => SaveQuestion("update"));
+
+            inputCategory.gameObject.SetActive(false);
+            dropdownCategory.gameObject.SetActive(true);
         }
         else
         {
-            category.value = category.options.FindIndex(option => option.text == PlayerPrefs.GetString("Category"));
+            if (PlayerPrefs.GetString("Category").Equals("AddNewCategory"))
+            {
+                inputCategory.gameObject.SetActive(true);
+                dropdownCategory.gameObject.SetActive(false);
+                buttonExit.onClick.RemoveAllListeners();
+                buttonExit.onClick.AddListener(() => SceneManager.LoadScene("Categories"));
+            }
+            else
+            {
+                inputCategory.gameObject.SetActive(false);
+                dropdownCategory.gameObject.SetActive(true);
+                dropdownCategory.value = dropdownCategory.options.FindIndex(option => option.text == PlayerPrefs.GetString("Category"));
+            }
 
             buttonSave.onClick.AddListener(() => SaveQuestion("insert"));
         }
@@ -93,8 +110,17 @@ public class FormQuestion : MonoBehaviour
             " VALUES (@category, @level, @question, @answer1, @answer2, @answer3, @answer4);";
         }
         
-        command.Parameters.AddWithValue("@category", category.options[category.value].text);
-        command.Parameters.AddWithValue("@level", Convert.ToInt32(level.value) + 1);
+        if (inputCategory.gameObject.activeSelf)
+        {
+            command.Parameters.AddWithValue("@category", inputCategory.text);
+            PlayerPrefs.SetString("Category", inputCategory.text);
+            PlayerPrefs.Save();
+        }
+        else
+        {
+            command.Parameters.AddWithValue("@category", dropdownCategory.options[dropdownCategory.value].text);
+        }
+        command.Parameters.AddWithValue("@level", Convert.ToInt32(dropdownLevel.value) + 1);
         command.Parameters.AddWithValue("@question", question.text);
         command.Parameters.AddWithValue("@answer1", answer1.text);
         command.Parameters.AddWithValue("@answer2", answer2.text);

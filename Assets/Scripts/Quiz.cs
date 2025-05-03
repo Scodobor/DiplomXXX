@@ -25,6 +25,7 @@ public class Quiz : MonoBehaviour
     int questionCounter = 0;
     int answerCounter = 0;
     DataTable questionsTable = new DataTable();
+    private bool isCheckingAnswer = false;
 
     void Start()
     {
@@ -126,6 +127,13 @@ public class Quiz : MonoBehaviour
     //проверяет правильность выбранного варианта ответа
     public async void CheckAnswer(Button button, int buttonNumber)
     {
+        // Если функция уже выполняется - выходим
+        if (isCheckingAnswer)
+        {
+            return;
+        }
+        isCheckingAnswer = true;
+
         // Отключение анимации кнопки
         Animator animator = button.GetComponent<Animator>();
         if (animator != null)
@@ -133,11 +141,7 @@ public class Quiz : MonoBehaviour
             animator.enabled = false; 
         }
 
-<<<<<<< Updated upstream
-        // Смена цвета
-=======
         // Смена цвета кнопки
->>>>>>> Stashed changes
         Color defaultColor = button.image.color;
         if (buttonNumber == correctAnswer)
         {
@@ -153,23 +157,17 @@ public class Quiz : MonoBehaviour
 
         // Возврат стандартного цвета
         button.image.color = defaultColor;
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
         // Включение анимации кнопки
         if (animator != null)
         {
             animator.enabled = true; 
-<<<<<<< Updated upstream
             animator.Rebind();
-=======
-            animator.Rebind(); 
->>>>>>> Stashed changes
             animator.Update(0f); 
         }
 
         DisplayQuestion();
+        isCheckingAnswer = false;
     }
 
     //конец викторины, меняются кнопки на экране
