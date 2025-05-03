@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Threading.Tasks;
 using System.Data;
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.Security.Cryptography;
 
 public class Quiz : MonoBehaviour
 {
@@ -34,16 +37,48 @@ public class Quiz : MonoBehaviour
 
     public async void GetQuestions()
     {
+        DataHolder dataHolder = FindAnyObjectByType<DataHolder>();
+        if (dataHolder == null)
+        {
+            GameObject go = new GameObject("DataHolder");
+            dataHolder = go.AddComponent<DataHolder>();
+        }
+        List<string> categories = dataHolder.listQuizCategories;
+        List<int> levels = dataHolder.listQuizLevels;
         try 
         { 
             //подключение к БД
             using var connection = new MySqlConnection(Global.builder.ConnectionString);
             await connection.OpenAsync();
 
+            var sqlCategories = new List<string>();
+            for (int i = 0; i < categories.Count; i++)
+            {
+                sqlCategories.Add($"@c{i}");
+            }
+
+            var sqlLevels = new List<string>();
+            for (int i = 0; i < levels.Count; i++)
+            {
+                sqlLevels.Add($"@l{i}");
+            }
+
             //запрос на получение 5 случайных вопросов 
-            using var command = connection.CreateCommand();
-            command.CommandText = "SELECT question, answer1, answer2, answer3, answer4" +
-                " FROM quiz ORDER BY RAND() LIMIT 5;";
+            using var command = new MySqlCommand(
+                $"SELECT question, answer1, answer2, answer3, answer4 FROM quiz WHERE category IN ({string.Join(", ", sqlCategories)}) AND level IN ({string.Join(", ", sqlLevels)}) ORDER BY RAND() LIMIT 5;",
+                connection);
+
+            // Добавляем параметры
+            for (int i = 0; i < categories.Count; i++)
+            {
+                command.Parameters.AddWithValue($"@c{i}", categories[i]);
+            }
+
+            for (int i = 0; i < levels.Count; i++)
+            {
+                command.Parameters.AddWithValue($"@l{i}", levels[i]);
+            }
+
             MySqlDataReader reader = await command.ExecuteReaderAsync();
             questionsTable.Load(reader);
             DisplayQuestion();
@@ -98,7 +133,11 @@ public class Quiz : MonoBehaviour
             animator.enabled = false; 
         }
 
+<<<<<<< Updated upstream
         // Смена цвета
+=======
+        // Смена цвета кнопки
+>>>>>>> Stashed changes
         Color defaultColor = button.image.color;
         if (buttonNumber == correctAnswer)
         {
@@ -111,13 +150,22 @@ public class Quiz : MonoBehaviour
         }
 
         await Task.Delay(2000);
-        button.image.color = defaultColor;
 
+        // Возврат стандартного цвета
+        button.image.color = defaultColor;
+<<<<<<< Updated upstream
+
+=======
+>>>>>>> Stashed changes
         // Включение анимации кнопки
         if (animator != null)
         {
             animator.enabled = true; 
+<<<<<<< Updated upstream
             animator.Rebind();
+=======
+            animator.Rebind(); 
+>>>>>>> Stashed changes
             animator.Update(0f); 
         }
 
