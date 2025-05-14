@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 4766563026617284cb995d3e8ee7b8d6
+guid: 6b59511d8fc734945ab60987ca34a778
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Verdana
+  - Poppins
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

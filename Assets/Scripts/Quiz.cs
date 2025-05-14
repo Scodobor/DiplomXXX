@@ -101,27 +101,14 @@ public class Quiz : MonoBehaviour
                 DataRow row = questionsTable.Rows[questionCounter];
                 questionText.text = (string)row[0];
 
-                // Создаем список всех возможных ответов
-                List<string> answers = new List<string>
-            {
-                (string)row[1], // правильный
-                (string)row[2],
-                (string)row[3],
-                (string)row[4]
-            };
+                System.Random random = new System.Random();
+                int randomNumber = random.Next(4);
+                correctAnswer = randomNumber + 1;
 
-                // Перемешиваем их
-                Shuffle(answers);
-
-                // Устанавливаем текст на кнопки
-                answerButton1.GetComponentInChildren<TMP_Text>().text = answers[0];
-                answerButton2.GetComponentInChildren<TMP_Text>().text = answers[1];
-                answerButton3.GetComponentInChildren<TMP_Text>().text = answers[2];
-                answerButton4.GetComponentInChildren<TMP_Text>().text = answers[3];
-
-                // Определяем, какой из перемешанных кнопок содержит правильный ответ
-                correctAnswer = answers.FindIndex(a => a == (string)row[1]) + 1;
-                // Если не найден — можно сделать fallback или выбросить ошибку
+                answerButton1.GetComponentInChildren<TMP_Text>().text = (string)row[randomNumber + 1];
+                answerButton2.GetComponentInChildren<TMP_Text>().text = (string)row[(1 + randomNumber) % 4 + 1];
+                answerButton3.GetComponentInChildren<TMP_Text>().text = (string)row[(2 + randomNumber) % 4 + 1];
+                answerButton4.GetComponentInChildren<TMP_Text>().text = (string)row[(3 + randomNumber) % 4 + 1];
 
                 questionCounter++;
                 questionNumber.text = questionCounter.ToString();
@@ -134,19 +121,6 @@ public class Quiz : MonoBehaviour
         catch (Exception ex)
         {
             Debug.Log(ex.Message);
-        }
-    }
-
-    private void Shuffle<T>(List<T> list)
-    {
-        int n = list.Count;
-        while (n > 1)
-        {
-            n--;
-            int k = UnityEngine.Random.Range(0, n + 1); 
-            T value = list[k];
-            list[k] = list[n];
-            list[n] = value;
         }
     }
 
