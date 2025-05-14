@@ -7,8 +7,6 @@ using MySqlConnector;
 using System;
 using TMPro;
 using UnityEngine.SceneManagement;
-using static UnityEngine.Rendering.DebugUI;
-using UnityEditorInternal;
 using Button = UnityEngine.UI.Button;
 
 public class QuizSettings : MonoBehaviour
